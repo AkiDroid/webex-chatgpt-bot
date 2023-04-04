@@ -279,10 +279,16 @@ framework.hears(
     const filePath = path.resolve(__dirname, 'replay.mp3')
     try {
       const tts = new MsEdgeTTS();
+      console.log(1)
       await tts.setMetadata("en-US-AriaNeural", OUTPUT_FORMAT.AUDIO_24KHZ_96KBITRATE_MONO_MP3);
+      console.log(2)
       await tts.toFile(filePath, reply);
+      console.log(3)
 
-      bot.sayWithLocalFile(reply, filePath).catch((e) => {
+      bot.sayWithLocalFile(reply, filePath).then(() = {
+
+        console.log(4)
+      }).catch((e) => {
         console.error(`Problem in the chatGPT command hander: ${e.message}`)
       })
     } catch (e) {
