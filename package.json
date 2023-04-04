@@ -25,6 +25,7 @@
     "body-parser": "^1.15.2",
     "dotenv": "^16.0.3",
     "express": "^4.14.0",
+    "msedge-tts": "^1.1.4",
     "openai": "^3.2.1",
     "webex-node-bot-framework": "^2.3.14"
   },

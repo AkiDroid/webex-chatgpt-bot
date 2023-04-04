@@ -8,6 +8,7 @@ var fs = require('fs');
 var app = express();
 var path = require('path')
 var chatGpt = require('./chat')
+var { MsEdgeTTS, OUTPUT_FORMAT } = require('msedge-tts')
 app.use(bodyParser.json());
 app.use(express.static("images"));
 const config = {
@@ -269,14 +270,27 @@ framework.hears(
 framework.hears(
   /.*/,
   async (bot, trigger) => {
-    // This will fire for any input so only respond if we haven't already
     console.log(`catch-all handler fired for user input: ${trigger.text}`);
+
+    // chatGPT
     const reply = await chatGpt(trigger.text)
-    bot
-      .say('markdown', reply)
-      .catch((e) =>
-        console.error(`Problem in the unexepected command hander: ${e.message}`)
-      );
+
+    // tts
+    const filePath = path.resolve(__dirname, 'replay.mp3')
+    const tts = new MsEdgeTTS();
+    await tts.setMetadata("en-US-AriaNeural", OUTPUT_FORMAT.AUDIO_24KHZ_96KBITRATE_MONO_MP3);
+    await tts.toFile(filePath, reply);
+
+    bot.sayWithLocalFile(reply, filePath).then(() => {
+    }).catch((e) => {
+      console.error(`Problem in the chatGPT command hander: ${e.message}`)
+    })
+
+    // bot
+      // .say('markdown', reply)
+      // .catch((e) =>
+        // console.error(`Problem in the unexepected command hander: ${e.message}`)
+      // );
   },
   99999
 );
