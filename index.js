@@ -277,14 +277,17 @@ framework.hears(
 
     // tts
     const filePath = path.resolve(__dirname, 'replay.mp3')
-    const tts = new MsEdgeTTS();
-    await tts.setMetadata("en-US-AriaNeural", OUTPUT_FORMAT.AUDIO_24KHZ_96KBITRATE_MONO_MP3);
-    await tts.toFile(filePath, reply);
+    try {
+      const tts = new MsEdgeTTS();
+      await tts.setMetadata("en-US-AriaNeural", OUTPUT_FORMAT.AUDIO_24KHZ_96KBITRATE_MONO_MP3);
+      await tts.toFile(filePath, reply);
 
-    bot.sayWithLocalFile(reply, filePath).then(() => {
-    }).catch((e) => {
-      console.error(`Problem in the chatGPT command hander: ${e.message}`)
-    })
+      bot.sayWithLocalFile(reply, filePath).catch((e) => {
+        console.error(`Problem in the chatGPT command hander: ${e.message}`)
+      })
+    } catch (e) {
+      console.error('problem', e.message)
+    }
 
     // bot
       // .say('markdown', reply)
