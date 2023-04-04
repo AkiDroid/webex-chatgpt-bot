@@ -285,7 +285,7 @@ framework.hears(
       await tts.toFile(filePath, reply);
       console.log(3)
 
-      bot.sayWithLocalFile(reply, filePath).then(() = {
+      bot.sayWithLocalFile(reply, filePath).then(() => {
 
         console.log(4)
       }).catch((e) => {
