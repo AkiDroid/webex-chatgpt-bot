@@ -4,7 +4,9 @@ var framework = require("webex-node-bot-framework");
 var webhook = require("webex-node-bot-framework/webhook");
 var express = require("express");
 var bodyParser = require("body-parser");
+var fs = require('fs');
 var app = express();
+var path = require('path')
 var chatGpt = require('./chat')
 app.use(bodyParser.json());
 app.use(express.static("images"));
@@ -233,46 +235,30 @@ framework.hears(
   0
 );
 
-/* On mention reply example
-ex User enters @botname 'reply' phrase, the bot will post a threaded reply
-*/
 framework.hears(
-  "reply",
-  (bot, trigger) => {
-    console.log("someone asked for a reply.  We will give them two.");
-    bot.reply(
-      trigger.message,
-      "This is threaded reply sent using the `bot.reply()` method.",
-      "markdown"
-    );
-    var msg_attach = {
-      text: "This is also threaded reply with an attachment sent via bot.reply(): ",
-      file: "https://media2.giphy.com/media/dTJd5ygpxkzWo/giphy-downsized-medium.gif",
-    };
-    bot.reply(trigger.message, msg_attach);
+  "file",
+  async (bot, trigger) => {
+    // This will fire for any input so only respond if we haven't already
+    console.log(`hear file`);
+    bot.sayWithLocalFile('here is a file', path.resolve(__dirname, './voice.m4a'))
+      .catch((e) =>
+        console.error('Problem with file', e.message)
+      );
   },
-  "**reply**: (have bot reply to your message)",
-  0
+  99999
 );
 
-/* On mention with command
-ex User enters @botname help, the bot will write back in markdown
- *
- * The framework.showHelp method will use the help phrases supplied with the previous
- * framework.hears() commands
-*/
 framework.hears(
-  /help|what can i (do|say)|what (can|do) you do/i,
-  (bot, trigger) => {
-    console.log(`someone needs help! They asked ${trigger.text}`);
-    bot
-      .say(`Hello ${trigger.person.displayName}.`)
-      //    .then(() => sendHelp(bot))
-      .then(() => bot.say("markdown", framework.showHelp()))
-      .catch((e) => console.error(`Problem in help hander: ${e.message}`));
+  "upload",
+  async (bot, trigger) => {
+    console.log('hear upload')
+    const filename = 'voice.m4a'
+    const stream = fs.createReadStream(path.resolve(__dirname, './voice.m4a'))
+    bot.uploadStream(stream).catch((e) => {
+      console.error('Promble with upload', e.message)
+    })
   },
-  "**help**: (what you are reading now)",
-  0
+  99999
 );
 
 /* On mention with unexpected bot command
